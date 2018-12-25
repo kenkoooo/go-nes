@@ -8,16 +8,10 @@ import (
 	"github.com/go-gl/glfw/v3.1/glfw"
 )
 
-type View interface {
-	Enter()
-	Exit()
-	Update(t, dt float64)
-}
-
 type Director struct {
 	window    *glfw.Window
 	audio     *Audio
-	view      View
+	view      *GameView
 	timestamp float64
 }
 
@@ -32,7 +26,7 @@ func (d *Director) SetTitle(title string) {
 	d.window.SetTitle(title)
 }
 
-func (d *Director) SetView(view View) {
+func (d *Director) SetView(view *GameView) {
 	if d.view != nil {
 		d.view.Exit()
 	}
