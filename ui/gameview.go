@@ -11,26 +11,27 @@ import (
 const padding = 0
 
 type GameView struct {
-	director *Director
-	console  *nes.Console
-	title    string
-	hash     string
-	texture  uint32
-	record   bool
-	frames   []image.Image
+	window  *glfw.Window
+	audio   *Audio
+	console *nes.Console
+	title   string
+	hash    string
+	texture uint32
+	record  bool
+	frames  []image.Image
 }
 
-func NewGameView(director *Director, console *nes.Console, title, hash string) *GameView {
+func NewGameView(window *glfw.Window, audio *Audio, console *nes.Console, title, hash string) *GameView {
 	texture := createTexture()
-	return &GameView{director, console, title, hash, texture, false, nil}
+	return &GameView{window, audio, console, title, hash, texture, false, nil}
 }
 
 func (view *GameView) Enter() {
 	gl.ClearColor(0, 0, 0, 1)
-	view.director.SetTitle(view.title)
-	view.console.SetAudioChannel(view.director.audio.channel)
-	view.console.SetAudioSampleRate(view.director.audio.sampleRate)
-	view.director.window.SetKeyCallback(view.onKey)
+	view.window.SetTitle(view.title)
+	view.console.SetAudioChannel(view.audio.channel)
+	view.console.SetAudioSampleRate(view.audio.sampleRate)
+	view.window.SetKeyCallback(view.onKey)
 	// load state
 	if err := view.console.LoadState(savePath(view.hash)); err == nil {
 		return
@@ -47,7 +48,7 @@ func (view *GameView) Enter() {
 }
 
 func (view *GameView) Exit() {
-	view.director.window.SetKeyCallback(nil)
+	view.window.SetKeyCallback(nil)
 	view.console.SetAudioChannel(nil)
 	view.console.SetAudioSampleRate(0)
 	// save sram
@@ -63,14 +64,14 @@ func (view *GameView) Update(t, dt float64) {
 	if dt > 1 {
 		dt = 0
 	}
-	window := view.director.window
+	window := view.window
 	console := view.console
 
 	updateControllers(window, console)
 	console.StepSeconds(dt)
 	gl.BindTexture(gl.TEXTURE_2D, view.texture)
 	setTexture(console.Buffer())
-	drawBuffer(view.director.window)
+	drawBuffer(view.window)
 	gl.BindTexture(gl.TEXTURE_2D, 0)
 	if view.record {
 		view.frames = append(view.frames, copyImage(console.Buffer()))

@@ -4,6 +4,7 @@ import (
 	"log"
 	"runtime"
 
+	"../nes"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 	"github.com/gordonklaus/portaudio"
@@ -56,7 +57,34 @@ func Run(path string) {
 	}
 	gl.Enable(gl.TEXTURE_2D)
 
-	// run director
-	director := NewDirector(window, audio)
-	director.Start(path)
+	// run
+	start(path, audio, window)
+}
+
+func start(path string, audio *Audio, window *glfw.Window) {
+	hash, err := hashFile(path)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	console, err := nes.NewConsole(path)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	view := NewGameView(window, audio, console, path, hash)
+	view.Enter()
+	timestamp := glfw.GetTime()
+
+	for !window.ShouldClose() {
+		gl.Clear(gl.COLOR_BUFFER_BIT)
+		now := glfw.GetTime()
+		dt := now - timestamp
+		timestamp = now
+		if view != nil {
+			view.Update(now, dt)
+		}
+		window.SwapBuffers()
+		glfw.PollEvents()
+	}
+	view.Exit()
 }
