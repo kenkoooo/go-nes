@@ -54,13 +54,9 @@ func (d *Director) Step() {
 	}
 }
 
-func (d *Director) Start(paths []string) {
-	d.menuView = NewMenuView(d, paths)
-	if len(paths) == 1 {
-		d.PlayGame(paths[0])
-	} else {
-		d.ShowMenu()
-	}
+func (d *Director) Start(path string) {
+	d.menuView = NewMenuView(d, []string{path})
+	d.PlayGame(path)
 	d.Run()
 }
 
