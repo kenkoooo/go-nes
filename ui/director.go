@@ -18,7 +18,6 @@ type Director struct {
 	window    *glfw.Window
 	audio     *Audio
 	view      View
-	menuView  View
 	timestamp float64
 }
 
@@ -55,21 +54,6 @@ func (d *Director) Step() {
 }
 
 func (d *Director) Start(path string) {
-	d.menuView = NewMenuView(d, []string{path})
-	d.PlayGame(path)
-	d.Run()
-}
-
-func (d *Director) Run() {
-	for !d.window.ShouldClose() {
-		d.Step()
-		d.window.SwapBuffers()
-		glfw.PollEvents()
-	}
-	d.SetView(nil)
-}
-
-func (d *Director) PlayGame(path string) {
 	hash, err := hashFile(path)
 	if err != nil {
 		log.Fatalln(err)
@@ -79,8 +63,10 @@ func (d *Director) PlayGame(path string) {
 		log.Fatalln(err)
 	}
 	d.SetView(NewGameView(d, console, path, hash))
-}
-
-func (d *Director) ShowMenu() {
-	d.SetView(d.menuView)
+	for !d.window.ShouldClose() {
+		d.Step()
+		d.window.SwapBuffers()
+		glfw.PollEvents()
+	}
+	d.SetView(nil)
 }
