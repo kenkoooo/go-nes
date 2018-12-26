@@ -58,10 +58,6 @@ func Run(path string) {
 	gl.Enable(gl.TEXTURE_2D)
 
 	// run
-	start(path, audio, window)
-}
-
-func start(path string, audio *Audio, window *glfw.Window) {
 	hash, err := hashFile(path)
 	if err != nil {
 		log.Fatalln(err)
