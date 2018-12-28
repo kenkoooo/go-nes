@@ -34,7 +34,7 @@ func NewConsole(path string) (*Console, error) {
 		return nil, err
 	}
 	console.Mapper = mapper
-	console.CPU = NewCPU(&console)
+	console.CPU = NewCPU(NewCPUMemory(&console))
 	console.APU = NewAPU(&console)
 	console.PPU = NewPPU(&console)
 	return &console, nil
