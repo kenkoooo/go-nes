@@ -58,16 +58,12 @@ func Run(path string) {
 	gl.Enable(gl.TEXTURE_2D)
 
 	// run
-	hash, err := hashFile(path)
-	if err != nil {
-		log.Fatalln(err)
-	}
 	console, err := nes.NewConsole(path)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	view := NewGameView(window, audio, console, path, hash)
+	view := NewGameView(window, audio, console, path)
 	view.Enter()
 	timestamp := glfw.GetTime()
 

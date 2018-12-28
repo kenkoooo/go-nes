@@ -15,15 +15,14 @@ type GameView struct {
 	audio   *Audio
 	console *nes.Console
 	title   string
-	hash    string
 	texture uint32
 	record  bool
 	frames  []image.Image
 }
 
-func NewGameView(window *glfw.Window, audio *Audio, console *nes.Console, title, hash string) *GameView {
+func NewGameView(window *glfw.Window, audio *Audio, console *nes.Console, title string) *GameView {
 	texture := createTexture()
-	return &GameView{window, audio, console, title, hash, texture, false, nil}
+	return &GameView{window, audio, console, title, texture, false, nil}
 }
 
 func (view *GameView) Enter() {
@@ -32,32 +31,34 @@ func (view *GameView) Enter() {
 	view.console.SetAudioChannel(view.audio.channel)
 	view.console.SetAudioSampleRate(view.audio.sampleRate)
 	view.window.SetKeyCallback(view.onKey)
-	// load state
-	if err := view.console.LoadState(savePath(view.hash)); err == nil {
-		return
-	} else {
-		view.console.Reset()
-	}
-	// load sram
-	cartridge := view.console.Cartridge
-	if cartridge.Battery != 0 {
-		if sram, err := readSRAM(sramPath(view.hash)); err == nil {
-			cartridge.SRAM = sram
-		}
-	}
+
+	view.console.Reset()
+	// // load state
+	// if err := view.console.LoadState(savePath(view.hash)); err == nil {
+	// 	return
+	// } else {
+	// view.console.Reset()
+	// }
+	// // load sram
+	// cartridge := view.console.Cartridge
+	// if cartridge.Battery != 0 {
+	// 	if sram, err := readSRAM(sramPath(view.hash)); err == nil {
+	// 		cartridge.SRAM = sram
+	// 	}
+	// }
 }
 
 func (view *GameView) Exit() {
 	view.window.SetKeyCallback(nil)
 	view.console.SetAudioChannel(nil)
 	view.console.SetAudioSampleRate(0)
-	// save sram
-	cartridge := view.console.Cartridge
-	if cartridge.Battery != 0 {
-		writeSRAM(sramPath(view.hash), cartridge.SRAM)
-	}
-	// save state
-	view.console.SaveState(savePath(view.hash))
+	// // save sram
+	// cartridge := view.console.Cartridge
+	// if cartridge.Battery != 0 {
+	// 	writeSRAM(sramPath(view.hash), cartridge.SRAM)
+	// }
+	// // save state
+	// view.console.SaveState(savePath(view.hash))
 }
 
 func (view *GameView) Update(t, dt float64) {

@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"crypto/md5"
 	"encoding/binary"
 	"fmt"
 	"image"
@@ -9,7 +8,6 @@ import (
 	"image/draw"
 	"image/gif"
 	"image/png"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/user"
@@ -113,14 +111,6 @@ func combineButtons(a, b [8]bool) [8]bool {
 		result[i] = a[i] || b[i]
 	}
 	return result
-}
-
-func hashFile(path string) (string, error) {
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("%x", md5.Sum(data)), nil
 }
 
 func createTexture() uint32 {
