@@ -2,7 +2,6 @@ package nes
 
 import (
 	"encoding/gob"
-	"fmt"
 )
 
 const CPUFrequency = 1789773
@@ -264,26 +263,26 @@ func (cpu *CPU) Reset() {
 	cpu.SetFlags(0x24)
 }
 
-// PrintInstruction prints the current CPU state
-func (cpu *CPU) PrintInstruction() {
-	opcode := cpu.Read(cpu.PC)
-	bytes := instructionSizes[opcode]
-	name := instructionNames[opcode]
-	w0 := fmt.Sprintf("%02X", cpu.Read(cpu.PC+0))
-	w1 := fmt.Sprintf("%02X", cpu.Read(cpu.PC+1))
-	w2 := fmt.Sprintf("%02X", cpu.Read(cpu.PC+2))
-	if bytes < 2 {
-		w1 = "  "
-	}
-	if bytes < 3 {
-		w2 = "  "
-	}
-	fmt.Printf(
-		"%4X  %s %s %s  %s %28s"+
-			"A:%02X X:%02X Y:%02X P:%02X SP:%02X CYC:%3d\n",
-		cpu.PC, w0, w1, w2, name, "",
-		cpu.A, cpu.X, cpu.Y, cpu.Flags(), cpu.SP, (cpu.Cycles*3)%341)
-}
+// // PrintInstruction prints the current CPU state
+// func (cpu *CPU) PrintInstruction() {
+// 	opcode := cpu.Read(cpu.PC)
+// 	bytes := instructionSizes[opcode]
+// 	name := instructionNames[opcode]
+// 	w0 := fmt.Sprintf("%02X", cpu.Read(cpu.PC+0))
+// 	w1 := fmt.Sprintf("%02X", cpu.Read(cpu.PC+1))
+// 	w2 := fmt.Sprintf("%02X", cpu.Read(cpu.PC+2))
+// 	if bytes < 2 {
+// 		w1 = "  "
+// 	}
+// 	if bytes < 3 {
+// 		w2 = "  "
+// 	}
+// 	fmt.Printf(
+// 		"%4X  %s %s %s  %s %28s"+
+// 			"A:%02X X:%02X Y:%02X P:%02X SP:%02X CYC:%3d\n",
+// 		cpu.PC, w0, w1, w2, name, "",
+// 		cpu.A, cpu.X, cpu.Y, cpu.Flags(), cpu.SP, (cpu.Cycles*3)%341)
+// }
 
 // pagesDiffer returns true if the two addresses reference different pages
 func pagesDiffer(a, b uint16) bool {
