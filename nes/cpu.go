@@ -1,9 +1,5 @@
 package nes
 
-import (
-	"encoding/gob"
-)
-
 const CPUFrequency = 1789773
 
 // interrupt types
@@ -114,42 +110,6 @@ var instructionPageCycles = [256]byte{
 	1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0,
 }
 
-// instructionNames indicates the name of each instruction
-var instructionNames = [256]string{
-	"BRK", "ORA", "KIL", "SLO", "NOP", "ORA", "ASL", "SLO",
-	"PHP", "ORA", "ASL", "ANC", "NOP", "ORA", "ASL", "SLO",
-	"BPL", "ORA", "KIL", "SLO", "NOP", "ORA", "ASL", "SLO",
-	"CLC", "ORA", "NOP", "SLO", "NOP", "ORA", "ASL", "SLO",
-	"JSR", "AND", "KIL", "RLA", "BIT", "AND", "ROL", "RLA",
-	"PLP", "AND", "ROL", "ANC", "BIT", "AND", "ROL", "RLA",
-	"BMI", "AND", "KIL", "RLA", "NOP", "AND", "ROL", "RLA",
-	"SEC", "AND", "NOP", "RLA", "NOP", "AND", "ROL", "RLA",
-	"RTI", "EOR", "KIL", "SRE", "NOP", "EOR", "LSR", "SRE",
-	"PHA", "EOR", "LSR", "ALR", "JMP", "EOR", "LSR", "SRE",
-	"BVC", "EOR", "KIL", "SRE", "NOP", "EOR", "LSR", "SRE",
-	"CLI", "EOR", "NOP", "SRE", "NOP", "EOR", "LSR", "SRE",
-	"RTS", "ADC", "KIL", "RRA", "NOP", "ADC", "ROR", "RRA",
-	"PLA", "ADC", "ROR", "ARR", "JMP", "ADC", "ROR", "RRA",
-	"BVS", "ADC", "KIL", "RRA", "NOP", "ADC", "ROR", "RRA",
-	"SEI", "ADC", "NOP", "RRA", "NOP", "ADC", "ROR", "RRA",
-	"NOP", "STA", "NOP", "SAX", "STY", "STA", "STX", "SAX",
-	"DEY", "NOP", "TXA", "XAA", "STY", "STA", "STX", "SAX",
-	"BCC", "STA", "KIL", "AHX", "STY", "STA", "STX", "SAX",
-	"TYA", "STA", "TXS", "TAS", "SHY", "STA", "SHX", "AHX",
-	"LDY", "LDA", "LDX", "LAX", "LDY", "LDA", "LDX", "LAX",
-	"TAY", "LDA", "TAX", "LAX", "LDY", "LDA", "LDX", "LAX",
-	"BCS", "LDA", "KIL", "LAX", "LDY", "LDA", "LDX", "LAX",
-	"CLV", "LDA", "TSX", "LAS", "LDY", "LDA", "LDX", "LAX",
-	"CPY", "CMP", "NOP", "DCP", "CPY", "CMP", "DEC", "DCP",
-	"INY", "CMP", "DEX", "AXS", "CPY", "CMP", "DEC", "DCP",
-	"BNE", "CMP", "KIL", "DCP", "NOP", "CMP", "DEC", "DCP",
-	"CLD", "CMP", "NOP", "DCP", "NOP", "CMP", "DEC", "DCP",
-	"CPX", "SBC", "NOP", "ISC", "CPX", "SBC", "INC", "ISC",
-	"INX", "SBC", "NOP", "SBC", "CPX", "SBC", "INC", "ISC",
-	"BEQ", "SBC", "KIL", "ISC", "NOP", "SBC", "INC", "ISC",
-	"SED", "SBC", "NOP", "ISC", "NOP", "SBC", "INC", "ISC",
-}
-
 type CPU struct {
 	Memory           // memory interface
 	Cycles    uint64 // number of cycles
@@ -214,46 +174,6 @@ func (c *CPU) createTable() {
 		c.beq, c.sbc, c.kil, c.isc, c.nop, c.sbc, c.inc, c.isc,
 		c.sed, c.sbc, c.nop, c.isc, c.nop, c.sbc, c.inc, c.isc,
 	}
-}
-
-func (cpu *CPU) Save(encoder *gob.Encoder) error {
-	encoder.Encode(cpu.Cycles)
-	encoder.Encode(cpu.PC)
-	encoder.Encode(cpu.SP)
-	encoder.Encode(cpu.A)
-	encoder.Encode(cpu.X)
-	encoder.Encode(cpu.Y)
-	encoder.Encode(cpu.C)
-	encoder.Encode(cpu.Z)
-	encoder.Encode(cpu.I)
-	encoder.Encode(cpu.D)
-	encoder.Encode(cpu.B)
-	encoder.Encode(cpu.U)
-	encoder.Encode(cpu.V)
-	encoder.Encode(cpu.N)
-	encoder.Encode(cpu.interrupt)
-	encoder.Encode(cpu.stall)
-	return nil
-}
-
-func (cpu *CPU) Load(decoder *gob.Decoder) error {
-	decoder.Decode(&cpu.Cycles)
-	decoder.Decode(&cpu.PC)
-	decoder.Decode(&cpu.SP)
-	decoder.Decode(&cpu.A)
-	decoder.Decode(&cpu.X)
-	decoder.Decode(&cpu.Y)
-	decoder.Decode(&cpu.C)
-	decoder.Decode(&cpu.Z)
-	decoder.Decode(&cpu.I)
-	decoder.Decode(&cpu.D)
-	decoder.Decode(&cpu.B)
-	decoder.Decode(&cpu.U)
-	decoder.Decode(&cpu.V)
-	decoder.Decode(&cpu.N)
-	decoder.Decode(&cpu.interrupt)
-	decoder.Decode(&cpu.stall)
-	return nil
 }
 
 // Reset resets the CPU to its initial powerup state
